@@ -1,0 +1,14 @@
+# Ignore compiled class files
+*.class
+
+# Ignore temporary files
+*.log
+*.ctxt
+.DS_Store
+Thumbs.db
+
+# Ignore IDE settings (VS Code / Eclipse / IntelliJ)
+.vscode/
+.idea/
+*.iml
+bin/
