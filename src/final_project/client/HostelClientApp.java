@@ -23,7 +23,17 @@ public class HostelClientApp extends JFrame {
         super("Hostel Assist | Full Screen");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
-        // --- 1. SETUP UNDECORATED FOR SMOOTH FADE ---
+        // --- 1. SET CUSTOM LOGO ---
+        // Put "logo.png" in your project folder!
+        try {
+            setIconImage(Toolkit.getDefaultToolkit().getImage("Logo.png"));
+            // For Mac Dock (Optional)
+            if (Taskbar.isTaskbarSupported()) {
+                Taskbar.getTaskbar().setIconImage(Toolkit.getDefaultToolkit().getImage("Logo.png"));
+            }
+        } catch (Exception e) { System.out.println("Logo not found"); }
+
+        // --- 2. SETUP UNDECORATED FOR SMOOTH FADE ---
         setUndecorated(false); 
         
         setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -34,7 +44,7 @@ public class HostelClientApp extends JFrame {
         rootPanel.add(createDashboardScreen(), "DASHBOARD");
         add(rootPanel);
         
-        // --- 2. INTRO FADE ANIMATION ---
+        // --- 3. INTRO FADE ANIMATION ---
         try {
             setOpacity(0.0f);
             setVisible(true);
@@ -184,24 +194,20 @@ public class HostelClientApp extends JFrame {
         addNavButton("Resource Share", "P2P");
         addNavButton("Mess Feedback", "MESS");
 
-        // --- FIXED LOGOUT BUTTON ---
         JButton logout = new JButton("Logout");
-        // Manually styling it to match without breaking standard listeners
         logout.setFont(Style.NORM_FONT);
         logout.setForeground(Color.WHITE);
-        logout.setBackground(new Color(180, 50, 50)); // Red base
+        logout.setBackground(new Color(180, 50, 50)); 
         logout.setFocusPainted(false);
         logout.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         logout.setHorizontalAlignment(SwingConstants.LEFT);
         logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        // Add Hover Effect
         logout.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent e) { logout.setBackground(new Color(200, 70, 70)); }
             public void mouseExited(MouseEvent e) { logout.setBackground(new Color(180, 50, 50)); }
         });
 
-        // Add Click Action
         logout.addActionListener(e -> {
             CURRENT_USER = ""; rootLayout.show(rootPanel, "LOGIN");
         });
