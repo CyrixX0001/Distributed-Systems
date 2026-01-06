@@ -28,7 +28,7 @@ You do **not** need to compile code manually. We have a one-click launcher.
 
 1. **Prerequisite:** Ensure Java is installed (`java -version`).
 2. **Download** this repository.
-3. **Double-click `launcher.bat**`.
+3. **Double-click `HostelApplication.bat**`.
 
 > **Note:** The launcher will automatically:
 > * Kill any old background servers.
@@ -54,8 +54,8 @@ You do **not** need to compile code manually. We have a one-click launcher.
 
 To test file sharing between two students:
 
-1. Run `launcher.bat` -> Login as **Alice** -> Click **Share File**.
-2. Run `launcher.bat` **again** (keep Alice open) -> Login as **Bob**.
+1. Run `HostelApplication.bat` -> Login as **Alice** -> Click **Share File**.
+2. Run `HostelApplication.bat` **again** (keep Alice open) -> Login as **Bob**.
 3. On Bob's window, go to **Resource Share** -> Click **Refresh List**.
 4. Download Alice's file directly!
 
