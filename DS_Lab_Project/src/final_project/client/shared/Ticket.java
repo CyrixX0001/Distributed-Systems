@@ -10,8 +10,6 @@ public class Ticket implements Serializable, Comparable<Ticket> {
     private String description;
     private String status;
     private String remarks;
-    // --- NEW FIELD ---
-    private String resolvedBy; 
     private long timestamp;
 
     public Ticket(String room, String category, String description) {
@@ -21,7 +19,6 @@ public class Ticket implements Serializable, Comparable<Ticket> {
         this.description = description;
         this.status = "OPEN";
         this.remarks = "Pending review";
-        this.resolvedBy = "None"; 
         this.timestamp = System.currentTimeMillis();
     }
 
@@ -29,14 +26,11 @@ public class Ticket implements Serializable, Comparable<Ticket> {
     public String getRoom() { return room; }
     public void setStatus(String s) { this.status = s; }
     public void setRemarks(String r) { this.remarks = r; }
-    
-    // --- THIS WAS MISSING ---
-    public void setResolvedBy(String w) { this.resolvedBy = w; } 
 
     @Override
     public String toString() {
-        return String.format("[%s] Room %s | %s\nDesc: %s\nStatus: %s\n(By: %s) | Remarks: %s\n-------------------------------", 
-               id, room, category, description, status, resolvedBy, remarks);
+        return String.format("[%s] Room %s | %s\nDesc: %s\nStatus: %s\nRemarks: %s\n-------------------------------", 
+               id, room, category, description, status, remarks);
     }
 
     @Override

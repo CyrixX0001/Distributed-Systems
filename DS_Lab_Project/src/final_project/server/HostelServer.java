@@ -18,7 +18,7 @@ public class HostelServer {
     public static void main(String[] args) {
         setupDatabase();
         System.out.println(">>> HOSTEL SERVER ONLINE");
-        System.out.println(">>> Loaded " + userDB.size() + " users.");
+        System.out.println(">>> Loaded " + userDB.size() + " users (40 Indian Students + Alice/Bob/Admin).");
         
         new Thread(HostelServer::startSocketServer).start(); 
         new Thread(NoticeService::start).start();            
@@ -26,27 +26,23 @@ public class HostelServer {
     }
 
     private static void setupDatabase() {
-        // 1. Admins
+        // 1. Fixed Accounts
         userDB.put("admin", "admin::warden::OFFICE");
-        userDB.put("warden1", "admin::warden::OFFICE"); 
-        userDB.put("warden2", "admin::warden::OFFICE");
-        
-        // 2. Legacy Test Users
         userDB.put("alice", "123::student::101");
         userDB.put("bob",   "123::student::102");
 
-        // 3. Generate 40 Indian Students (Rooms 101-110)
+        // 2. Generate 40 Indian Students (Rooms 101-110)
         String[] names = {
-            "Aarav", "Vihaan", "Aditya", "Sai",       
-            "Arjun", "Reyansh", "Muhammad", "Rohan",  
-            "Krishna", "Ishaan", "Shaurya", "Atharva",
-            "Neel", "Kabir", "Rudra", "Ayaan",        
-            "Dhruv", "Siddharth", "Jai", "Arav",      
-            "Ananya", "Diya", "Saanvi", "Aadhya",     
-            "Kiara", "Fatima", "Pari", "Myra",        
-            "Riya", "Anvi", "Sarah", "Prisha",        
-            "Amaya", "Kavya", "Zara", "Meera",        
-            "Naira", "Aditi", "Jiya", "Sana"          
+            "Aarav", "Vihaan", "Aditya", "Sai",       // Room 101
+            "Arjun", "Reyansh", "Muhammad", "Rohan",  // Room 102
+            "Krishna", "Ishaan", "Shaurya", "Atharva",// Room 103
+            "Neel", "Kabir", "Rudra", "Ayaan",        // Room 104
+            "Dhruv", "Siddharth", "Jai", "Arav",      // Room 105
+            "Ananya", "Diya", "Saanvi", "Aadhya",     // Room 106
+            "Kiara", "Fatima", "Pari", "Myra",        // Room 107
+            "Riya", "Anvi", "Sarah", "Prisha",        // Room 108
+            "Amaya", "Kavya", "Zara", "Meera",        // Room 109
+            "Naira", "Aditi", "Jiya", "Sana"          // Room 110
         };
 
         int nameIdx = 0;
@@ -55,9 +51,10 @@ public class HostelServer {
                 if (nameIdx >= names.length) break;
                 
                 String rawName = names[nameIdx++];
-                String username = rawName.toLowerCase(); 
-                String password = username + "123";      
+                String username = rawName.toLowerCase(); // "sai"
+                String password = username + "123";      // "sai123"
                 
+                // Save: "password::role::room"
                 userDB.put(username, password + "::student::" + room);
             }
         }
@@ -123,14 +120,12 @@ public class HostelServer {
                     boolean found = false;
                     for(Ticket t : tickets) {
                         if(t.getId().equals(p[1]) || t.getId().equals("T-" + p[1])) {
-                            t.setStatus(p[2]); 
-                            t.setRemarks(p[3]);
-                            if (p.length > 4) t.setResolvedBy(p[4]); // Save Warden Name
-                            found = true; break;
+                            t.setStatus(p[2]); t.setRemarks(p[3]); found = true; break;
                         }
                     }
                     out.println(found ? "SUCCESS" : "FAIL");
                 }
+                // --- PRIVATE P2P LOGIC ---
                 else if (req.startsWith("P2P_REGISTER")) {
                     String[] p = req.split("::");
                     String target = (p.length > 4) ? p[4] : "ALL";

@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.Scanner;
 import final_project.client.Style;
-import final_project.client.HostelClientApp; // Needed for Current User
 
 public class WardenPanel extends JPanel {
     private JTextArea txtList = new JTextArea();
@@ -120,13 +119,8 @@ public class WardenPanel extends JPanel {
         try (Socket s = new Socket("localhost", 5000);
              PrintWriter out = new PrintWriter(s.getOutputStream(), true);
              BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()))) {
-            
-            // --- UPDATED: SENDS WARDEN NAME ---
             String cmd = "UPDATE::" + txtTicketID.getText().trim() + "::" + 
-                         cmbStatus.getSelectedItem() + "::" + 
-                         txtRemarks.getText() + "::" + 
-                         HostelClientApp.CURRENT_USER;
-            
+                         cmbStatus.getSelectedItem() + "::" + txtRemarks.getText();
             out.println(cmd);
             JOptionPane.showMessageDialog(this, in.readLine());
             refresh();

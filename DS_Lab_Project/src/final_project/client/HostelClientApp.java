@@ -2,7 +2,8 @@ package final_project.client;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 import final_project.client.panels.*;
@@ -13,6 +14,7 @@ public class HostelClientApp extends JFrame {
     private JPanel contentArea = new JPanel(new CardLayout());
     private JPanel sidebar = new JPanel();
     
+    // We need a reference to the login box to animate it
     private JPanel loginBox; 
 
     public static String CURRENT_USER = ""; 
@@ -22,10 +24,6 @@ public class HostelClientApp extends JFrame {
     public HostelClientApp() {
         super("Hostel Assist | Full Screen");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-        // --- 1. SETUP UNDECORATED FOR SMOOTH FADE ---
-        setUndecorated(false); 
-        
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setMinimumSize(new Dimension(1000, 700));
         setLocationRelativeTo(null);
@@ -33,32 +31,7 @@ public class HostelClientApp extends JFrame {
         rootPanel.add(createLoginScreen(), "LOGIN");
         rootPanel.add(createDashboardScreen(), "DASHBOARD");
         add(rootPanel);
-        
-        // --- 2. INTRO FADE ANIMATION ---
-        try {
-            setOpacity(0.0f);
-            setVisible(true);
-            fadeInWindow();
-        } catch (Exception e) {
-            System.out.println("Transparency not supported, showing normally.");
-            setVisible(true);
-        }
-    }
-
-    private void fadeInWindow() {
-        Timer timer = new Timer(20, new ActionListener() {
-            float opacity = 0.0f;
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                opacity += 0.05f;
-                if (opacity >= 1.0f) {
-                    opacity = 1.0f;
-                    ((Timer)e.getSource()).stop();
-                }
-                setOpacity(opacity);
-            }
-        });
-        timer.start();
+        setVisible(true);
     }
 
     private JPanel createLoginScreen() {
@@ -94,7 +67,7 @@ public class HostelClientApp extends JFrame {
         loginBox.add(roleCombo);
         loginBox.add(userField);
         loginBox.add(passField);
-        loginBox.add(new JLabel("")); 
+        loginBox.add(new JLabel("")); // Spacer
         loginBox.add(loginBtn);
         
         panel.add(loginBox);
@@ -129,30 +102,34 @@ public class HostelClientApp extends JFrame {
                 
                 rootLayout.show(rootPanel, "DASHBOARD");
             } else {
+                // --- TRIGGER ANIMATION ON FAILURE ---
                 shakeComponent(loginBox);
                 JOptionPane.showMessageDialog(this, "Invalid Username/Password");
             }
         } catch (Exception ex) { JOptionPane.showMessageDialog(this, "Server Offline"); }
     }
 
+    // --- ANIMATION LOGIC ---
     private void shakeComponent(JComponent component) {
         final Point originalLocation = component.getLocation();
         final int shakeDistance = 10;
-        final int shakeSpeed = 5; 
+        final int shakeSpeed = 5; // Lower is faster
 
         Timer timer = new Timer(shakeSpeed, null);
         timer.addActionListener(new ActionListener() {
             int count = 0;
             int direction = 1;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 int xOffset = direction * shakeDistance;
                 component.setLocation(originalLocation.x + xOffset, originalLocation.y);
                 direction = -direction;
                 count++;
-                if (count >= 10) { 
+
+                if (count >= 10) { // Shake 10 times
                     component.setLocation(originalLocation);
-                    ((Timer)e.getSource()).stop();
+                    timer.stop();
                 }
             }
         });
@@ -184,24 +161,8 @@ public class HostelClientApp extends JFrame {
         addNavButton("Resource Share", "P2P");
         addNavButton("Mess Feedback", "MESS");
 
-        // --- FIXED LOGOUT BUTTON ---
-        JButton logout = new JButton("Logout");
-        // Manually styling it to match without breaking standard listeners
-        logout.setFont(Style.NORM_FONT);
-        logout.setForeground(Color.WHITE);
-        logout.setBackground(new Color(180, 50, 50)); // Red base
-        logout.setFocusPainted(false);
-        logout.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
-        logout.setHorizontalAlignment(SwingConstants.LEFT);
-        logout.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
-        // Add Hover Effect
-        logout.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { logout.setBackground(new Color(200, 70, 70)); }
-            public void mouseExited(MouseEvent e) { logout.setBackground(new Color(180, 50, 50)); }
-        });
-
-        // Add Click Action
+        JButton logout = Style.createNavButton("Logout");
+        logout.setBackground(new Color(180, 50, 50));
         logout.addActionListener(e -> {
             CURRENT_USER = ""; rootLayout.show(rootPanel, "LOGIN");
         });
@@ -219,6 +180,7 @@ public class HostelClientApp extends JFrame {
     private JPanel createDashboardScreen() {
         JPanel d = new JPanel(new BorderLayout());
         contentArea.setBackground(Style.APP_BG);
+        
         contentArea.add(new StudentPanel(), "COMPLAINT");
         contentArea.add(new RoomPanel(), "ROOM");
         contentArea.add(new NoticePanel(), "NOTICE");
